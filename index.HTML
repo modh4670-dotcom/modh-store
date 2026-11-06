@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طلب أوردر جديد | موضه 💜</title>
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary: #8A2BE2;
+            --primary-glow: rgba(138, 43, 226, 0.4);
+            --bg-gradient: linear-gradient(135deg, #0f0c1b 0%, #1a0f2e 50%, #05020a 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --text-main: #f3effa;
+            --text-muted: #a69cb5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Ambient Background Lights */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: var(--primary);
+            filter: blur(150px);
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::before { top: 10%; left: 10%; }
+        body::after { bottom: 10%; right: 10%; }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: rgba(20, 15, 35, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+            z-index: 1;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--primary-glow);
+            animation: pulse 2.5s infinite;
+            margin-bottom: 15px;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            background: linear-gradient(to left, #fff, #d6bbf2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #d6bbf2;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 500px) {
+            .form-row { grid-template-columns: 1fr; gap: 0; }
+        }
+
+        label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            transition: color 0.3s;
+            font-size: 1rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 45px 14px 15px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        input:focus + i, select:focus + i, textarea:focus + i {
+            color: var(--primary);
+        }
+
+        select option {
+            background: #1a152e;
+            color: var(--text-main);
+        }
+
+        /* Products Dynamic Cards */
+        .product-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            animation: slideIn 0.4s ease forwards;
+        }
+
+        .product-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .product-badge {
+            background: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .btn-remove {
+            background: none;
+            border: none;
+            color: #ff4a4a;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .btn-remove:hover { opacity: 0.8; }
+
+        /* Upload Area */
+        .upload-container {
+            border: 2px dashed rgba(138, 43, 226, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(0,0,0,0.15);
+        }
+
+        .upload-container:hover {
+            border-color: var(--primary);
+            background: rgba(138, 43, 226, 0.05);
+        }
+
+        .upload-container i { font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; }
+        .upload-container p { font-size: 0.85rem; color: var(--text-muted); }
+
+        .preview-box {
+            margin-top: 10px;
+            display: none;
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--primary);
+        }
+
+        .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .btn-add-product {
+            width: 100%;
+            background: transparent;
+            border: 1px dashed var(--primary);
+            color: #d6bbf2;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-add-product:hover {
+            background: rgba(138, 43, 226, 0.1);
+            color: #fff;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(138, 43, 226, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .btn-submit::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.6s;
+            animation: shine 3s infinite linear;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(138, 43, 226, 0.6);
+        }
+
+        .btn-submit:disabled {
+            background: #4a3b5c;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 30px rgba(138,43,226,0.2); }
+            100% { transform: scale(1); opacity: 0.9; }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="logo-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+            <h1>موضه MODH💜</h1>
+            <p>مع موضه اطلبي اوردرك بسهولة</p>
+        </header>
+
+        <form id="orderForm">
+            <div class="section-title"><i class="fa-solid fa-user-gear"></i> البيانات الشخصية</div>
+            
+            <div class="form-group">
+                <label>الاسم بالكامل</label>
+                <div class="input-wrapper">
+                    <input type="text" id="custName" required placeholder="اكتب اسمك الثلاثي">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>رقم الموبايل الأساسي</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="custPhone1" required placeholder="01xxxxxxxxx">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>رقم موبايل إضافي</label>
+                    <div class="input-wrapper">
+                        <input type="tel" id="custPhone2" placeholder="رقم آخر لضمان الوصول">
+                        <i class="fa-solid fa-mobile-screen"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>المحافظة</label>
+                <div class="input-wrapper">
+                    <select id="custGov" required>
+                        <option value="" disabled selected>اختر محافظتك</option>
+                        <option value="القاهرة">القاهرة</option>
+                        <option value="الجيزة">الجيزة</option>
+                        <option value="الإسكندرية">الإسكندرية</option>
+                        <option value="القليوبية">القليوبية</option>
+                        <option value="الدقهلية">الدقهلية</option>
+                        <option value="الشرقية">الشرقية</option>
+                        <option value="المنوفية">المنوفية</option>
+                        <option value="الغربية">الغربية</option>
+                        <option value="البحيرة">البحيرة</option>
+                        <option value="دمياط">دمياط</option>
+                        <option value="بورسعيد">بورسعيد</option>
+                        <option value="الإسماعيلية">الإسماعيلية</option>
+                        <option value="السويس">السويس</option>
+                        <option value="كفر الشيخ">كفر الشيخ</option>
+                        <option value="الفيوم">الفيوم</option>
+                        <option value="بني سويف">بني سويف</option>
+                        <option value="المنيا">المنيا</option>
+                        <option value="أسيوط">أسيوط</option>
+                        <option value="سوهاج">سوهاج</option>
+                        <option value="قنا">قنا</option>
+                        <option value="الأقصر">الأقصر</option>
+                        <option value="أسوان">أسوان</option>
+                        <option value="مطروح">مطروح</option>
+                        <option value="الوادي الجديد">الوادي الجديد</option>
+                        <option value="البحر الأحمر">البحر الأحمر</option>
+                        <option value="شمال سيناء">شمال سيناء</option>
+                        <option value="جنوب سيناء">جنوب سيناء</option>
+                    </select>
+                    <i class="fa-solid fa-map-location-dot"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>العنوان بالتفصيل</label>
+                <div class="input-wrapper">
+                    <input type="text" id="custAddress" required placeholder="المدينة، اسم الشارع، رقم العمارة والدور">
+                    <i class="fa-solid fa-house-chimney"></i>
+                </div>
+            </div>
+
+            <div class="section-title"><i class="fa-solid fa-basket-shopping"></i> تفاصيل المنتجات المُراد طلبها</div>
+            
+            <div id="productsContainer">
+                <!-- Dynamic cards will appear here -->
+            </div>
+
+            <button type="button" class="btn-add-product" onclick="addProductCard()">
+                <i class="fa-solid fa-circle-plus"></i> إضافة منتج آخر 
+            </button>
+
+            <button type="submit" id="submitBtn" class="btn-submit">
+                <i class="fa-brands fa-whatsapp"></i> تأكيد الطلب 
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // ⚙️ الإعدادات البرمجية الخاصة بك (قم بالتعديل هنا فقط)
+        const WHATSAPP_NUMBER = "201102267327"; // ضَع رقمك هنا بمفتاح الدولة وبدون أصفار أو علامة +
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrUVbxaGPlnJbS5tZON9bsG0-kjullWEAmsKKdBSxINjHcIone5ugL7wUi4demLBMslQ/exec"; // ضَع رابط الـ Web App الخاص بجوجل شيت هنا
+        
+        let productCount = 0;
+
+        // دالة لإنشاء كارت منتج جديد يدوياً بالكامل مع خيار الصورة وضغطها
+        function addProductCard() {
+            productCount++;
+            const container = document.getElementById('productsContainer');
+            
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.id = `productCard_${productCount}`;
+            
+            card.innerHTML = `
+                <div class="product-card-header">
+                    <span class="product-badge">المنتج #${productCount}</span>
+                    ${productCount > 1 ? `<button type="button" class="btn-remove" onclick="removeProductCard(${productCount})"><i class="fa-solid fa-trash-can"></i> حذف</button>` : ''}
+                </div>
+                
+                <div class="form-group">
+                    <label>نوع المنتج / الموديل / الكود</label>
+                    <div class="input-wrapper">
+                        <input type="text" class="prod-name" required placeholder="مثال: فستان موف سواريه كود 404">
+                        <i class="fa-solid fa-shirt"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>الكمية المطلوب طلبها</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="prod-qty" value="1" min="1" required>
+                        <i class="fa-solid fa-arrow-up-9-1"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>ملاحظات إضافية (المقاس / اللون)</label>
+                    <div class="input-wrapper">
+                        <input type="text" class="prod-notes" placeholder="اكتب المقاس أو أي تفاصيل خاصة بالقطعة">
+                        <i class="fa-solid fa-pen-nib"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>ارفاق إسكرين شوت للمنتج (لقطة الشاشة)</label>
+                    <div class="upload-container" onclick="document.getElementById('file_${productCount}').click()">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <p>اضغط لرفع لقطة الشاشة أو الصورة</p>
+                        <input type="file" id="file_${productCount}" accept="image/*" style="display:none;" onchange="handleImageUpload(event, ${productCount})">
+                    </div>
+                    <div class="preview-box" id="previewBox_${productCount}">
+                        <img id="imgPreview_${productCount}" src="" alt="المعاينة">
+                    </div>
+                    <input type="hidden" class="prod-image-base64" id="base64_${productCount}">
+                </div>
+            `;
+            container.appendChild(card);
+        }
+
+        function removeProductCard(id) {
+            const card = document.getElementById(`productCard_${id}`);
+            if (card) card.remove();
+        }
+
+        // دالة متطورة لاستقبال الصورة وضغطها بنسبة 85% لتفادي مشاكل الحجم الكبيرة مع خوادم جوجل شيت
+        function handleImageUpload(event, id) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    // عملية الضغط والتصغير البرمجية الذكية للملف
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    const MAX_WIDTH = 600; // تصغير العرض الأقصى لتقليل الحجم
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // تحويل الصورة المضغوطة لصيغة نصية خفيفة الجودة (0.7)
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    // حفظ النص في الحقل المخفي وتنشيط المعاينة للعميل
+                    document.getElementById(`base64_${id}`).value = compressedBase64;
+                    document.getElementById(`imgPreview_${id}`).src = compressedBase64;
+                    document.getElementById(`previewBox_${id}`).style.display = 'block';
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+
+        // معالجة النموذج بالكامل عند نقر زر التأكيد
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> جاري الحفظ وتجهيز الطلب...`;
+
+            // تجميع البيانات الشخصية للمشتري
+            const name = document.getElementById('custName').value;
+            const phone1 = document.getElementById('custPhone1').value;
+            const phone2 = document.getElementById('custPhone2').value || "غير محدد";
+            const gov = document.getElementById('custGov').value;
+            const address = document.getElementById('custAddress').value;
+
+            // تجميع مصفوفة كروت المنتجات
+            const orders = [];
+            const cards = document.getElementsByClassName('product-card');
+            
+            for (let card of cards) {
+                const prodName = card.querySelector('.prod-name').value;
+                const prodQty = card.querySelector('.prod-qty').value;
+                const prodNotes = card.querySelector('.prod-notes').value || "لا يوجد";
+                const prodImg = card.querySelector('.prod-image-base64').value || "";
+
+                orders.push({
+                    product: prodName,
+                    quantity: prodQty,
+                    notes: prodNotes,
+                    image: prodImg
+                });
+            }
+
+            const payload = { name, phone1, phone2, governorate: gov, address, orders };
+
+            // 1. إرسال وتخزين البيانات فوراً إلى خادم جوجل شيت
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // لضمان الإرسال السريع وتخطي مشاكل الحماية
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                executeWhatsAppRedirect(name, phone1, phone2, gov, address, orders);
+            }).catch(err => {
+                console.error("Sheet Error:", err);
+                // الفتح الاحتياطي للواتساب في حال تعطل شبكة الإنترنت العامة
+                executeWhatsAppRedirect(name, phone1, phone2, gov, address, orders);
+            });
+        });
+
+        // دالة بناء الرسالة الاحترافية المنسقة وفتح تطبيق الواتساب تلقائياً
+        function executeWhatsAppRedirect(name, phone1, phone2, gov, address, orders) {
+            let msg = `✨ *أوردر جديد من موضه* 💜\n\n`;
+            msg += `👤 *بيانات العميل الشخصية:*\n`;
+            msg += `▪️ *الاسم:* ${name}\n`;
+            msg += `▪️ *رقم الموبايل 1:* ${phone1}\n`;
+            msg += `▪️ *رقم الموبايل 2:* ${phone2}\n`;
+            msg += `▪️ *المحافظة:* ${gov}\n`;
+            msg += `▪️ *العنوان بالتفصيل:* ${address}\n\n`;
+            msg += `🛍️ *تفاصيل المنتجات المطلوبة:*\n`;
+            msg += `---------------------------------------\n`;
+
+            orders.forEach((item, index) => {
+                msg += `📦 *المنتج (${index + 1}):* ${item.product}\n`;
+                msg += `🔢 *الكمية:* ${item.quantity}\n`;
+                msg += `📝 *الملاحظات:* ${item.notes}\n`;
+                if(item.image) {
+                    msg += `🖼️ _[تم إرفاق لقطة شاشة للمنتج في السيستم]_ \n`;
+                }
+                msg += `---------------------------------------\n`;
+            });
+
+            const encodedMsg = encodeURIComponent(msg);
+            const whatsappUrl = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodedMsg}`;
+            
+            // إعادة ضبط الزر بعد إتمام كل العمليات بنجاح
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fa-brands fa-whatsapp"></i> تأكيد الأوردر `;
+
+            // فتح شات الواتساب مباشرة
+            window.location.href = whatsappUrl;
+        }
+
+        // تشغيل كارت منتج أول وتلقائي بمجرد تحميل الصفحة للعميل لأول مرة
+        window.onload = function() {
+            addProductCard();
+        };
+    </script>
+</body>
+</html>
